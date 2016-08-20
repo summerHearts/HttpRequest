@@ -1,5 +1,5 @@
 //
-//  HttpRequest.h
+//  HttpSessionRequest.h
 //  HttpRequest
 //
 //  Created by Kenvin on 16/8/14.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-@interface HttpRequest : NSObject
+@interface HttpSessionRequest : NSObject
 /**
  *  网络状态
  */

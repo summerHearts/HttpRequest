@@ -14,7 +14,7 @@
 		AEF2C2841D6069E1004F439F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEF2C2821D6069E1004F439F /* Main.storyboard */; };
 		AEF2C2861D6069E1004F439F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEF2C2851D6069E1004F439F /* Assets.xcassets */; };
 		AEF2C2891D6069E1004F439F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEF2C2871D6069E1004F439F /* LaunchScreen.storyboard */; };
-		AEF2C2921D606B50004F439F /* HttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF2C2911D606B50004F439F /* HttpRequest.m */; };
+		AEF2C2921D606B50004F439F /* HttpSessionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF2C2911D606B50004F439F /* HttpSessionRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,8 +31,8 @@
 		AEF2C2851D6069E1004F439F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AEF2C2881D6069E1004F439F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AEF2C28A1D6069E1004F439F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AEF2C2901D606B50004F439F /* HttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HttpRequest.h; path = HttpRequest/HttpRequest.h; sourceTree = "<group>"; };
-		AEF2C2911D606B50004F439F /* HttpRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HttpRequest.m; path = HttpRequest/HttpRequest.m; sourceTree = "<group>"; };
+		AEF2C2901D606B50004F439F /* HttpSessionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HttpSessionRequest.h; path = HttpRequest/HttpSessionRequest.h; sourceTree = "<group>"; };
+		AEF2C2911D606B50004F439F /* HttpSessionRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HttpSessionRequest.m; path = HttpRequest/HttpSessionRequest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,8 +67,8 @@
 		AEF2C26D1D6069E1004F439F = {
 			isa = PBXGroup;
 			children = (
-				AEF2C2901D606B50004F439F /* HttpRequest.h */,
-				AEF2C2911D606B50004F439F /* HttpRequest.m */,
+				AEF2C2901D606B50004F439F /* HttpSessionRequest.h */,
+				AEF2C2911D606B50004F439F /* HttpSessionRequest.m */,
 				AEF2C2781D6069E1004F439F /* HttpRequest */,
 				AEF2C2771D6069E1004F439F /* Products */,
 				3D7EDAFFF13BB302CE9BE9DF /* Pods */,
@@ -230,7 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AEF2C2811D6069E1004F439F /* ViewController.m in Sources */,
-				AEF2C2921D606B50004F439F /* HttpRequest.m in Sources */,
+				AEF2C2921D606B50004F439F /* HttpSessionRequest.m in Sources */,
 				AEF2C27E1D6069E1004F439F /* AppDelegate.m in Sources */,
 				AEF2C27B1D6069E1004F439F /* main.m in Sources */,
 			);

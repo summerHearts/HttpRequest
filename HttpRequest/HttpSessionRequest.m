@@ -1,12 +1,12 @@
 //
-//  HttpRequest.m
+//  HttpSessionRequest.m
 //  HttpRequest
 //
 //  Created by Kenvin on 16/8/14.
 //  Copyright © 2016年 上海方创金融股份服务有限公司. All rights reserved.
 //
 
-#import "HttpRequest.h"
+#import "HttpSessionRequest.h"
 #import "AFNetworking.h"
 #import "AFNetworkActivityIndicatorManager.h"
 
@@ -22,7 +22,7 @@ static NSTimeInterval      requestTimeout = 10;
 
 #define ERROR [NSError errorWithDomain:@"请求失败" code:-999 userInfo:@{ NSLocalizedDescriptionKey:ERROR_IMFORMATION}]
 
-@implementation HttpRequest
+@implementation HttpSessionRequest
 
 
 + (NSMutableArray *)allTasks {
