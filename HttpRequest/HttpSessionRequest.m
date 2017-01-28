@@ -6,17 +6,24 @@
 //  Copyright © 2016年 上海方创金融股份服务有限公司. All rights reserved.
 //
 
-#import "HttpSessionRequest.h"
 #import "AFNetworking.h"
+#import <YYCache/YYCache.h>
+#import "HttpSessionRequest.h"
 #import "AFNetworkActivityIndicatorManager.h"
+
+NSString * const HttpRequestCache = @"HttpRequestCache";
+
+#define NTLog(...) NSLog(__VA_ARGS__)  //如果不需要打印数据, 注释掉NSLog
 
 static NSMutableArray      *requestTasks;
 
 static NSMutableDictionary *headers;
 
-static NetworkStatus     networkStatus;
+static NetworkStatus       networkStatus;
 
 static NSTimeInterval      requestTimeout = 10;
+
+
 
 #define ERROR_IMFORMATION @"网络出现错误，请检查网络连接"
 
@@ -80,6 +87,41 @@ static NSTimeInterval      requestTimeout = 10;
                      progressBlock:(NetWorkingProgress)progressBlock
                       successBlock:(ResponseSuccessBlock)successBlock
                          failBlock:(ResponseFailBlock)failBlock {
+    
+    //处理中文和空格问题
+    url = [url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    //拼接
+    NSString * cacheUrl = [self urlDictToStringWithUrlStr:url WithDict:params];
+    
+    YYCache *cache = [[YYCache alloc] initWithName:HttpRequestCache];
+    
+    cache.memoryCache.shouldRemoveAllObjectsOnMemoryWarning = YES;
+    cache.memoryCache.shouldRemoveAllObjectsWhenEnteringBackground = YES;
+    
+    id cacheData;
+    
+    if (useCache) {
+        //根据网址从Cache中取数据
+        cacheData = [cache objectForKey:cacheUrl];
+        if (cacheData != 0) {
+            //将数据统一处理
+            if ([cacheData isKindOfClass:[NSDictionary  class]]) {
+                NSDictionary *  requestDic = (NSDictionary *)cacheData;
+                //根据返回的接口内容来变
+                NSString * succ = [NSString stringWithFormat:@"%@",requestDic[@"code"]];
+                if ([succ isEqualToString:@"2000"]) {
+                    if ([requestDic isKindOfClass:[NSDictionary  class]]) {
+                        NTLog(@"requestDic>>>  %@",requestDic);
+                    }
+                    successBlock ? successBlock(cacheData) : nil;
+                }else{
+                   failBlock ? failBlock(requestDic[@"msg"]) : nil;
+                }
+            }
+        }
+    }
+
+    
     AFHTTPSessionManager *manager = [self manager];
     URLSessionTask *session;
     NSString *versionStr = [[[NSBundle mainBundle]infoDictionary] objectForKey:@"CFBundleShortVersionString"];
@@ -96,7 +138,6 @@ static NSTimeInterval      requestTimeout = 10;
     
     if (httpMethod == POST) {
         
-        
         if (networkStatus == NetworkStatusNotReachable ||  networkStatus == NetworkStatusUnknown) {
             failBlock ? failBlock(ERROR) : nil;
             
@@ -107,7 +148,16 @@ static NSTimeInterval      requestTimeout = 10;
                 progressBlock(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount);
             }
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            successBlock ? successBlock(responseObject) : nil;
+            
+            if (useCache) {
+                [cache setObject:responseObject forKey:cacheUrl];
+            }
+            
+            NTLog(@">>>responseObject  %@",responseObject);
+            
+            if (!useCache || ![cacheData isEqual:responseObject]) {
+                successBlock ? successBlock(responseObject) : nil;
+            }
             
             [[self allTasks] removeObject:task];
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -129,8 +179,14 @@ static NSTimeInterval      requestTimeout = 10;
                 progressBlock(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount);
             }
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            
-            successBlock ? successBlock(responseObject) : nil;
+            if (useCache) {
+                [cache setObject:responseObject forKey:cacheUrl];
+            }
+            //这里可能会出现一种情况就是时间戳的问题，可能其他都是一样的，只有时间戳是不同的，那么就需要差异处理，最好不要返回不同的信息。
+            if (!useCache || ![cacheData isEqual:responseObject]) {
+                successBlock ? successBlock(responseObject) : nil;
+                NTLog(@">>>responseObject  %@",responseObject);
+            }
             
             [[self allTasks] removeObject:task];
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -314,6 +370,42 @@ static NSTimeInterval      requestTimeout = 10;
             }
         }];
     };
+}
+
+/**
+ *  拼接post请求的网址
+ *
+ *  @param urlStr     基础网址
+ *  @param parameters 拼接参数
+ *
+ *  @return 拼接完成的网址
+ */
++ (NSString *)urlDictToStringWithUrlStr:(NSString *)urlStr WithDict:(NSDictionary *)parameters{
+    if (!parameters) {
+        return urlStr;
+    }
+    
+    NSMutableArray *parts = [NSMutableArray array];
+    [parameters enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        //接收key
+        NSString *finalKey = [key stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+        //接收值
+        NSString *finalValue = [obj stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+        
+        
+        NSString *part =[NSString stringWithFormat:@"%@=%@",finalKey,finalValue];
+        
+        [parts addObject:part];
+        
+    }];
+    
+    NSString *queryString = [parts componentsJoinedByString:@"&"];
+    
+    queryString = queryString ? [NSString stringWithFormat:@"?%@",queryString] : @"";
+    
+    NSString *pathStr = [NSString stringWithFormat:@"%@?%@",urlStr,queryString];
+    
+    return pathStr;
 }
 
 
