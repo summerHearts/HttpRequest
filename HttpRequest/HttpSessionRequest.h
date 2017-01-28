@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
+
 @interface HttpSessionRequest : NSObject
 /**
  *  网络状态

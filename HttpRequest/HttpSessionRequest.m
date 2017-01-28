@@ -15,22 +15,19 @@ NSString * const HttpRequestCache = @"HttpRequestCache";
 
 #define NTLog(...) NSLog(__VA_ARGS__)  //如果不需要打印数据, 注释掉NSLog
 
-static NSMutableArray      *requestTasks;
+static NSMutableArray      *requestTasks;//管理网络请求的队列
 
-static NSMutableDictionary *headers;
+static NSMutableDictionary *headers; //请求头的参数设置
 
-static NetworkStatus       networkStatus;
+static NetworkStatus       networkStatus; //网络状态
 
-static NSTimeInterval      requestTimeout = 10;
+static NSTimeInterval      requestTimeout = 15;//请求超时时间
 
-
-
-#define ERROR_IMFORMATION @"网络出现错误，请检查网络连接"
+static NSString * const ERROR_IMFORMATION = @"网络出现错误，请检查网络连接";
 
 #define ERROR [NSError errorWithDomain:@"请求失败" code:-999 userInfo:@{ NSLocalizedDescriptionKey:ERROR_IMFORMATION}]
 
 @implementation HttpSessionRequest
-
 
 + (NSMutableArray *)allTasks {
     static dispatch_once_t onceToken;
@@ -50,9 +47,9 @@ static NSTimeInterval      requestTimeout = 10;
     requestTimeout = timeout;
 }
 
-+ (AFHTTPSessionManager *)manager {
-    [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
++ (AFHTTPSessionManager *)manager{
     
+    [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
